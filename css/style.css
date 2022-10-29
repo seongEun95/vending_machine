@@ -1,1 +1,238 @@
 @charset "utf-8";
+
+/* reset */
+* {
+  margin: 0;
+  padding: 0;
+}
+ul li {
+  list-style: none;
+}
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+input {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: default;
+}
+
+:root {
+  --lightColor: #f1f1f1;
+  --primaryColor: rgb(169, 23, 23);
+  --primaryLightColor: rgb(204, 68, 68);
+  --darkColor: #222;
+  --normalColor: #666;
+}
+
+/* 구매 가능 음료 클래스명 */
+.on {
+  background: var(--primaryColor) !important;
+  box-shadow: 0 0 10px var(--primaryColor);
+  transition: 0.2s;
+}
+/* 구입불가능한 버튼 마우스 모양 */
+.disabled {
+  cursor: not-allowed;
+}
+
+/* style */
+html {
+  width: 100%;
+  height: 100%;
+}
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: "Noto Sans KR", sans-serif;
+  background-image: url("../img/bg_img.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* header style */
+header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+}
+header h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--lightColor);
+}
+/* main style */
+main {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+main section {
+  width: 700px;
+  padding: 15px 30px;
+  background: linear-gradient(
+    180deg,
+    var(--primaryColor) 0%,
+    var(--primaryLightColor) 100%
+  );
+  box-sizing: border-box;
+  border-radius: 10px;
+  box-shadow: 0 0 20px var(--darkColor);
+}
+main section h2 {
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: var(--lightColor);
+}
+
+main section .money_area input {
+  width: 54px;
+  padding: 5px;
+  box-sizing: border-box;
+  text-align: right;
+}
+
+/* 동전 투입 스타일 */
+main section .coin_area {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  text-align: center;
+}
+main section .coin_area button {
+  font-size: 16px;
+  padding: 5px 10px;
+  color: var(--lightColor);
+  background: var(--darkColor);
+  border: 1px solid var(--lightColor);
+  border-radius: 5px;
+}
+
+main section .money_area {
+  margin: 20px 0;
+  padding: 15px 10px;
+  background: var(--darkColor);
+  border-radius: 5px;
+}
+main section .money_area ul {
+}
+main section .money_area ul li {
+  display: flex;
+  justify-content: center;
+  font-weight: 300;
+  margin-bottom: 10px;
+  color: var(--lightColor);
+  border-bottom: 1px dotted var(--lightColor);
+}
+main section .money_area ul li:last-child {
+  margin-bottom: 0;
+}
+main section .money_area ul li label {
+  width: 180px;
+}
+main section .money_area ul li input {
+  font-size: 16px;
+  color: var(--lightColor);
+}
+
+main section .drink_area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: var(--lightColor);
+  border-radius: 5px;
+}
+main section .drink_area li {
+  flex: 0 0 calc(25% - 14px);
+  text-align: center;
+  padding: 10px 5px;
+  box-sizing: border-box;
+  background: var(--darkColor);
+  border: 1px solid var(--lightColor);
+  border-radius: 10px;
+}
+main section .drink_area li button {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  color: var(--primaryColor);
+  background: var(--lightColor);
+  border: 1px solid var(--lightColor);
+  border-radius: 5px;
+}
+main section .drink_area input {
+  width: 18px;
+  font-size: 15px;
+  font-weight: 300;
+  text-align: center;
+  color: var(--lightColor);
+}
+main section .drink_area label,
+.drink_info {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--lightColor);
+}
+.message_area {
+  overflow-y: auto;
+  height: 200px;
+  padding: 20px 10px;
+  color: var(--lightColor);
+  background: var(--darkColor);
+  border: 1px solid var(--lightColor);
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.message_area li {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--lightColor);
+}
+
+/* footer style */
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 16px;
+  color: var(--lightColor);
+  text-align: center;
+  padding: 15px 0;
+}
+
+@media (max-width: 768px) {
+  body {
+    height: auto;
+  }
+  header {
+    display: none;
+  }
+  footer {
+    display: none;
+  }
+
+  main section .drink_area li {
+    flex: 1 0 auto;
+  }
+}

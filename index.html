@@ -18,38 +18,220 @@
   <main>
     <section>
       <h2>choose your drink</h2>
-      <!-- 자판기 -->
+      <!-- 자판기 동전 투입 영역 -->
+      <div class="coin_area">
+        <button class="coin" data-amount="100">100원 투입</button>
+        <button class="coin" data-amount="500">500원 투입</button>
+        <button class="coin" data-amount="1000">1,000원 투입</button>
+        <button type="button" id="change">잔돈 반환</button>
+      </div>
       <div class="vending_machine_wrap">
-        <!-- 음료 목록 영역 -->
-        <div class="drink_area">
+        <!-- 금액 출력 영역 -->
+        <div class="money_area">
           <ul>
-            <!-- list -->
             <li>
-              <img src="" alt="코카콜라 이미지">
-              <button>코카콜라</button>
+              <label for="total_amount">음료자판기 저장된 총 금액</label>
+              <input type="text" id="total_amount" value="1000" readonly><span>원</span>
+            </li>
+            <li>
+              <label for="input_amount">투입금액</label>
+              <input type="text" id="input_amount" value="0" readonly><span>원</span>
+            </li>
+            <li>
+              <label for="my_wallet">내 지갑</label>
+              <input type="text" id="my_wallet" value="10000" readonly><span>원</span>
             </li>
           </ul>
         </div>
-        <!-- 금액 출력 영역 -->
-        <div class="money_area"></div>
+
+        <!-- 음료 목록 영역 -->
+        <ul class="drink_area"></ul>
 
         <!-- 메시지 출력 영역 -->
-        <div class="message_area"></div>
+        <ul class="message_area"></ul>
       </div>
     </section>
   </main>
 
-  <button data-amount="100">100원 투입</button>
-  <button data-amount="500">500원 투입</button>
-  <button data-amount="1000">1,000원 투입</button>
-
   <footer>
-    개발자의 품격 - 음료자판기
+    개발자의 품격 부트캠프 - 음료자판기 과제
   </footer>
-
+  <!-- script -->
   <script>
-    const totalAmount = 10000;
+    const coins = document.querySelectorAll(".coin_area button.coin"); // 동전 투입 버튼들 가져오기
+    const totalAmount = document.querySelector('#total_amount'); // 총 금액 input 요소
+    let totalAmountValue = parseInt(totalAmount.value); // 총 금액 value 값
+    const inputAmount = document.querySelector("#input_amount"); // 투입 금액 input 요소
+    let inputAmountValue = parseInt(inputAmount.value); // 투입 금액 값
+    const myWallet = document.querySelector("#my_wallet"); // 내 지갑 input 요소
+    let myWalletValue = parseInt(myWallet.value); // 내 지갑 금액 값
 
+    const messageElem = document.querySelector(".message_area"); // 메시지 출력 요소
+
+    // 음료리스트 태그 삽입
+    function drinkListCreate() {
+      // drink list
+      const drinkList = [
+        { name: "코카콜라", price: 700, stock: 5, index: 1 },
+        { name: "오렌지주스", price: 1200, stock: 5, index: 2 },
+        { name: "커피", price: 500, stock: 5, index: 3 },
+        { name: "물", price: 700, stock: 5, index: 4 },
+        { name: "옥수수수염차", price: 1200, stock: 5, index: 5 },
+        { name: "밀키스", price: 700, stock: 5, index: 6 },
+        { name: "트래비", price: 1000, stock: 5, index: 7 }
+      ]
+      let listElem = [] // 빈 배열 선언
+      for (const drink of drinkList) {
+        listElem.push(`
+        <li>
+          <button data-amount="${drink.price}">${drink.name}</button>
+          <div class="drink_info">
+            (${drink.price}원,<label for="stock_value${drink.index}">재고수</label>
+            <input type="text" id="stock_value${drink.index}" value="${drink.stock}" readonly>)
+          </div>
+        </li>
+        `)
+      }
+      document.querySelector(".drink_area").innerHTML = listElem.join("") // innerHTML로 태그 삽입
+    }
+    drinkListCreate()
+
+    // 동전 투입 클릭 이벤트 함수
+    function inputCoinEvent() {
+
+      // 투입 버튼을 눌렀을 경우 이벤트
+      coins.forEach((element, index) => {
+        element.addEventListener('click', () => { // 투입 버튼 클릭 이벤트 
+          const coinAmount = parseInt(coins[index].dataset.amount); // 코인 금액
+
+          totalAmountValue += coinAmount; // 총 금액 + 코인 금액
+          totalAmount.value = totalAmountValue; // 총 금액 input의 value 값 = 자판기 총 금액
+
+          inputAmountValue += coinAmount; // 투입 금액 + 코인 금액
+          inputAmount.value = inputAmountValue // 투입금액 input의 value 값 = 투입된 총 금액
+
+          myWalletValue -= coinAmount; // 내 지갑 금액 - 코인 금액
+          myWallet.value = myWalletValue // 내 지갑 input의 value 값 = 소비된 금액
+
+          if (coinAmount === coinAmount) { // 투입 금액에 따라 메시지 출력
+            messageElem.insertAdjacentHTML("beforeend",
+              `
+            <li>
+              ${coinAmount}원이 투입되었습니다.<br>
+              총 투입 금액은 ${totalAmountValue}원 입니다. <br>
+              당신의 지갑에는 ${myWalletValue}원이 남아 있습니다.
+            </li>
+            `
+            )
+          }
+          if (myWalletValue < coinAmount) { // 지갑의 돈이 투입금액보다 작다면 메시지 출력
+            messageElem.insertAdjacentHTML("beforeend", `<li>지갑에 돈이 부족합니다.</li>`)
+          }
+          disabledCoinBtn() // 동전 투입 버튼 비활성화 함수 호출
+          activeDrinkBtn() // 동전 투입 버튼을 눌렀을 때 음료 버튼 활성화 함수 호출
+          messageScrollBottom() // 메시지가 길어 질 때 스크롤 아래로 호출 함수
+        })
+      });
+    }
+    inputCoinEvent()
+
+    // 동전 투입 버튼 비활성화 함수
+    function disabledCoinBtn() {
+      if (myWalletValue < 1000) { // 내 지갑에 돈이 1000원 이하면
+        coins[2].disabled = true; // 음료 버튼 disabled 속성 추가
+      } else {
+        coins[2].disabled = false;
+      }
+      if (myWalletValue < 500) { // 내 지갑에 돈이 500원 이하면
+        coins[1].disabled = true; // 음료 버튼 disabled 속성 추가
+      } else {
+        coins[1].disabled = false;
+      }
+      if (myWalletValue < 100) { // 내 지갑에 돈이 100원 이하면
+        coins[0].disabled = true; // 음료 버튼 disabled 속성 추가
+      } else {
+        coins[0].disabled = false;
+      }
+    }
+
+    // 음료 버튼 클릭 이벤트 함수
+    function drinkbtnEvent() {
+      const drinkBtns = document.querySelectorAll(".drink_area li button"); // 음료 버튼 가져오기
+      const drinkStock = document.querySelectorAll(".drink_area li input"); // 음료 재고 가져오기
+
+      drinkBtns.forEach((element, index) => { // 음료 버튼 forEach함수로 순회, 첫 번째 파라미터 요소, 두 번째 파라미터 인덱스 번호 반환
+        let drinkStockValue = parseInt(drinkStock[index].value); // stock 값
+        element.addEventListener("click", () => {
+          const drinkPrice = element.dataset.amount; // 음료 가격
+          if (totalAmountValue >= drinkPrice) { // 투입된 총 금액이 음료가격 보다 높거나 같다면
+
+            if (drinkStockValue > 0) { // 재고가 0보다 크다면
+              totalAmountValue -= drinkPrice; // 자판기에 투입된 총 금액 - 음료 값
+              totalAmount.value = totalAmountValue
+
+              drinkStockValue -= 1; // 재고 -1 씩 빼기
+              drinkStock[index].value = drinkStockValue;
+              messageElem.insertAdjacentHTML("beforeend", `<li>고객님께서 선택하신 음료 ${element.innerText}(이)가 나왔습니다.</li>`)
+
+            } else {
+              drinkStockValue = 0;
+              messageElem.insertAdjacentHTML("beforeend", `<li>음료 ${element.innerText}의 재고가 없습니다.</li>`)
+            }
+          } else {
+            messageElem.insertAdjacentHTML("beforeend", `<li>음료자판기에 잔돈이 부족해서 ${drinkBtns[index].innerText}를 구매할 수 없습니다.</li>`)
+          }
+          activeDrinkBtn() // 음료 버튼을 눌렀을 때 음료 버튼 활성화 함수 호출
+          messageScrollBottom() // 메시지가 길어 질 때 스크롤 아래로 호출 함수
+        })
+      });
+    }
+    drinkbtnEvent()
+
+    // 음료 버튼 활성화 함수
+    function activeDrinkBtn() {
+      const drinkListElem = document.querySelectorAll('.drink_area li'); // 음료 li 요소 가져오기
+      drinkListElem.forEach((element, index) => {
+        if (totalAmountValue >= element.children[0].dataset.amount) { // 자판기 금액이 음료가격보다 비싸다면
+          element.classList.add("on")
+          element.children[0].classList.remove("disabled")
+          element.classList.remove("disabled")
+        } else {
+          element.classList.remove("on")
+          element.children[0].classList.add("disabled")
+          element.classList.add("disabled")
+        }
+      })
+    }
+    activeDrinkBtn()
+
+    // 잔돈 반환 함수
+    function changeMoney() {
+      const changeBtn = document.querySelector('#change'); // 잔돈 요소 가져오기
+      changeBtn.addEventListener("click", () => { // 잔돈 버튼을 클릭했을 때 이벤트 발생
+        if (totalAmountValue > 0) { // 자판기 저장된 총 금액이 0 이상 이라면
+          messageElem.insertAdjacentHTML("beforeend", `<li>자판기에 저장된 금액 ${totalAmountValue}원이 잔돈으로 나옵니다.</li>`)
+          myWalletValue += totalAmountValue;
+          myWallet.value = myWalletValue;
+
+          totalAmountValue = 0;
+          totalAmount.value = 0;
+
+          inputAmountValue = 0;
+          inputAmount.value = 0;
+        } else {
+          messageElem.insertAdjacentHTML("beforeend", `<li>자판기에 저장된 금액이 없습니다.</li>`)
+        }
+        activeDrinkBtn() // 음료 버튼을 눌렀을 때 음료 버튼 활성화 함수 호출
+        messageScrollBottom() // 메시지가 길어 질 때 스크롤 아래로 호출 함수
+        disabledCoinBtn() // 동전 투입 버튼 비활성화 함수 호출
+      })
+    }
+    changeMoney()
+
+    // 메시지 창 스크롤 아래로 유지 함수
+    function messageScrollBottom() {
+      messageElem.scrollTop = messageElem.scrollHeight;
+    }
   </script>
 </body>
 
