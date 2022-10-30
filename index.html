@@ -118,7 +118,7 @@
               `
             <li>
               ${coinAmount}원이 투입되었습니다.<br>
-              총 투입 금액은 ${totalAmountValue}원 입니다. <br>
+              총 투입 금액은 ${inputAmountValue}원 입니다. <br>
               당신의 지갑에는 ${myWalletValue}원이 남아 있습니다.
             </li>
             `
@@ -134,9 +134,10 @@
       });
     }
     inputCoinEvent()
-
+    console.log(coins.length)
     // 동전 투입 버튼 비활성화 함수
     function disabledCoinBtn() {
+
       if (myWalletValue < 1000) { // 내 지갑에 돈이 1000원 이하면
         coins[2].disabled = true; // 음료 버튼 disabled 속성 추가
       } else {
