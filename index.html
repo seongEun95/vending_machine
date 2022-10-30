@@ -113,17 +113,17 @@
           myWalletValue -= coinAmount; // 내 지갑 금액 - 코인 금액
           myWallet.value = myWalletValue // 내 지갑 input의 value 값 = 소비된 금액
 
-          if (coinAmount === coinAmount) { // 투입 금액에 따라 메시지 출력
-            messageElem.insertAdjacentHTML("beforeend",
-              `
+          // 투입 금액에 따라 메시지 출력
+          messageElem.insertAdjacentHTML("beforeend",
+            `
             <li>
               ${coinAmount}원이 투입되었습니다.<br>
               총 투입 금액은 ${inputAmountValue}원 입니다. <br>
               당신의 지갑에는 ${myWalletValue}원이 남아 있습니다.
             </li>
             `
-            )
-          }
+          )
+
           if (myWalletValue < coinAmount) { // 지갑의 돈이 투입금액보다 작다면 메시지 출력
             messageElem.insertAdjacentHTML("beforeend", `<li>지갑에 돈이 부족합니다.</li>`)
           }
@@ -134,10 +134,8 @@
       });
     }
     inputCoinEvent()
-    console.log(coins.length)
     // 동전 투입 버튼 비활성화 함수
     function disabledCoinBtn() {
-
       if (myWalletValue < 1000) { // 내 지갑에 돈이 1000원 이하면
         coins[2].disabled = true; // 음료 버튼 disabled 속성 추가
       } else {
@@ -155,10 +153,11 @@
       }
     }
 
+    const drinkStock = document.querySelectorAll(".drink_area li input"); // 음료 재고 가져오기
     // 음료 버튼 클릭 이벤트 함수
     function drinkbtnEvent() {
       const drinkBtns = document.querySelectorAll(".drink_area li button"); // 음료 버튼 가져오기
-      const drinkStock = document.querySelectorAll(".drink_area li input"); // 음료 재고 가져오기
+
 
       drinkBtns.forEach((element, index) => { // 음료 버튼 forEach함수로 순회, 첫 번째 파라미터 요소, 두 번째 파라미터 인덱스 번호 반환
         let drinkStockValue = parseInt(drinkStock[index].value); // stock 값
@@ -190,9 +189,11 @@
 
     // 음료 버튼 활성화 함수
     function activeDrinkBtn() {
+
       const drinkListElem = document.querySelectorAll('.drink_area li'); // 음료 li 요소 가져오기
       drinkListElem.forEach((element, index) => {
-        if (totalAmountValue >= element.children[0].dataset.amount) { // 자판기 금액이 음료가격보다 비싸다면
+        drinkStockValue = parseInt(drinkStock[index].value); // stock 값
+        if (totalAmountValue >= element.children[0].dataset.amount && drinkStockValue !== 0) { // 자판기 금액이 음료가격보다 비싸다면
           element.classList.add("on")
           element.children[0].classList.remove("disabled")
           element.classList.remove("disabled")
